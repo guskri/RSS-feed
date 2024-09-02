@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Summary</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            font-size: 18px;
+            line-height: 1.6;
+            background-color: #121212; /* Dark mode background for the entire page */
+            color: #e0e0e0; /* Softer white text color */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .list-group-item {
+            margin-bottom: 20px;
+            background-color: #1e1e1e; /* Dark background for each article item */
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333; /* Border for article cards */
+            color: #e0e0e0; /* Ensure text color is consistent */
+        }
+
+        a {
+            text-decoration: none;
+            color: #bb86fc; /* Light purple color for links in dark mode */
+            font-weight: bold;
+        }
+
+        p {
+            margin: 5px 0;
+            color: #cccccc; /* Light gray text color for better readability */
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 10px;
+            border-radius: 8px; /* Rounded corners for images */
+        }
+
+        .source {
+            font-size: 14px;
+            color: #888; /* Softer gray for source text */
+            margin-bottom: 10px;
+        }
+
+        .dropdown-checkboxes {
+            display: none;
+            padding: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: #333; /* Dark mode background for dropdown */
+            border: 1px solid #444; /* Border for dropdown for better visibility */
+        }
+
+        .dropdown-checkboxes label {
+            display: block;
+            color: #e0e0e0; /* Text color for dropdown items */
+        }
+
+        .dark-mode-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+        }
+
+        .btn-secondary, .btn-primary {
+            background-color: #333;
+            color: #e0e0e0;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-secondary:hover, .btn-primary:hover {
+            background-color: #444; /* Darker hover effect */
+        }
+
+        .form-check-label {
+            color: #e0e0e0; /* Checkbox label color */
+        }
+
+        .card {
+            background-color: #1e1e1e; /* Dark background for article cards */
+            border: 1px solid #333; /* Border for card elements */
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        }
+
+        .article-title {
+            color: #bb86fc; /* Bright link color for titles */
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .article-summary {
+            color: #cccccc; /* Light gray for summaries */
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Latest News Summaries</h1>
+
+        <!-- Dark Mode Toggle -->
+        <button class="btn btn-secondary dark-mode-toggle" id="toggleDarkMode">Toggle Light/Dark Mode</button>
+
+        <!-- Filter by Source -->
+        <form method="GET" action="/" class="mb-3">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Filter by Sources
+                </button>
+                <div class="dropdown-menu dropdown-checkboxes" aria-labelledby="dropdownMenuButton">
+                    {% for source in sources %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="source" value="{{ source }}" id="source_{{ loop.index }}" {% if source in selected_sources %}checked{% endif %}>
+                            <label class="form-check-label" for="source_{{ loop.index }}">{{ source }}</label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Filter</button>
+        </form>
+
+        <!-- Generated Unbiased Article Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">Sammendrag</h2>
+                <p>{{ generated_article }}</p>
+            </div>
+        </div>
+
+        <!-- List of news articles -->
+        <ul class="list-group mt-4">
+            {% for article in news %}
+                <li class="list-group-item card">
+                    {% if article.image %}
+                        <img src="{{ article.image }}" alt="News Image">
+                    {% endif %}
+                    <a href="{{ article.link }}" class="article-title">{{ article.title }}</a>
+                    <p class="source">Source: {{ article.source }}</p>
+                    <p class="article-summary">{{ article.summary }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            $('.dropdown-toggle').click(function(){
+                $('.dropdown-checkboxes').toggle();
+            });
+
+            $(document).click(function(e) {
+                if (!$(e.target).closest('.dropdown').length) {
+                    $('.dropdown-checkboxes').hide();
+                }
+            });
+
+            // Toggle dark mode
+            $('#toggleDarkMode').click(function() {
+                $('body').toggleClass('dark-mode');
+                if ($('body').hasClass('dark-mode')) {
+                    $('body').css('background-color', '#121212');
+                    $('body').css('color', '#e0e0e0');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    $('body').css('background-color', '#ffffff');
+                    $('body').css('color', '#000000');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+
+            // Load saved theme
+            if (localStorage.getItem('theme') === 'dark') {
+                $('body').addClass('dark-mode');
+                $('body').css('background-color', '#121212');
+                $('body').css('color', '#e0e0e0');
+            }
+        });
+    </script>
+</body>
+</html>
