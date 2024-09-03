@@ -3,7 +3,6 @@ import feedparser  # For parsing RSS feeds
 from bs4 import BeautifulSoup  # For stripping HTML tags
 from urllib.parse import urlparse  # For parsing URLs
 import logging
-from transformers import pipeline  # Import the Hugging Face transformers library for text generation
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -20,49 +19,9 @@ RSS_FEEDS = [
     "https://www.adressa.no/rss",  # Adresseavisen
     "https://www.aftenbladet.no/rss",  # Stavanger Aftenblad
     "https://www.fvn.no/rss",  # Fædrelandsvennen
-    "https://www.vl.no/rss",  # Vårt Land
+    "https://www.vl.no/rss",         # Vårt Land
+
 ]
-
-def generate_unbiased_article(articles):
-    """
-    Generate an unbiased article using a GPT model based on multiple news summaries.
-    """
-    # Combine summaries from multiple articles
-    combined_text = "\n\n".join([article['summary'] for article in articles])
-    
-    # Ensure the input text length is reasonable
-    max_input_length = 1024
-    combined_text = combined_text[:max_input_length]  # Truncate if too long
-
-    # Load GPT-2 model and tokenizer from Hugging Face
-    generator = pipeline('text-generation', model='gpt2')
-
-    try:
-        # Generate text based on the combined summaries
-        response = generator(
-            f"Based on the following summaries, generate an unbiased article:\n\n{combined_text}", 
-            max_length=500,  # Adjust max_length to fit within token limits
-            num_return_sequences=1
-        )
-
-        # Extract generated text from the response
-        generated_article = response[0]['generated_text']
-        
-        # Optionally, remove the prompt text from the output
-        prompt_text = "Based on the following summaries, generate an unbiased article:\n\n"
-        
-        if generated_article.startswith(prompt_text):
-            generated_article = generated_article[len(prompt_text):]
-
-        return generated_article.strip()  # Clean up leading/trailing whitespace
-
-    except IndexError as ie:
-        logging.error(f"Index error during text generation: {ie}")
-        return "Index error occurred during text generation."
-
-    except Exception as e:
-        logging.error(f"Error during text generation: {e}")
-        return f"Error during text generation: {e}"
 
 @app.route('/')
 def home():
@@ -70,14 +29,11 @@ def home():
     news = fetch_news_summaries(selected_sources)
     sources = list(set([extract_source(feed) for feed in RSS_FEEDS]))  # Get unique sources for checkboxes
 
-    # Call AI function to generate uhnbiased article
-    generated_article = generate_unbiased_article(news) if news else "No articles available to generate summary."
-
-    return render_template('index.html', news=news, sources=sources, selected_sources=selected_sources, generated_article=generated_article)
+    return render_template('index.html', news=news, sources=sources, selected_sources=selected_sources)
 
 def fetch_news_summaries(selected_sources):
     all_news = []
-    
+
     for feed_url in RSS_FEEDS:
         try:
             parsed_feed = feedparser.parse(feed_url)
