@@ -3,6 +3,7 @@ import feedparser  # For parsing RSS feeds
 from bs4 import BeautifulSoup  # For stripping HTML tags
 from urllib.parse import urlparse  # For parsing URLs
 import logging
+import random
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -22,6 +23,7 @@ RSS_FEEDS = [
     "https://www.vl.no/rss",         # Vårt Land
 
 ]
+
 
 @app.route('/')
 def home():
@@ -64,6 +66,8 @@ def fetch_news_summaries(selected_sources):
         except Exception as e:
             logging.error(f"Error processing feed {feed_url}: {e}")
             continue  # Skip to the next feed if there's an error
+    # Shuffle the articles to create a random order
+    random.shuffle(all_news)
 
     return all_news
 
