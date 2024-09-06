@@ -1,0 +1,107 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    font-size: 18px;
+    line-height: 1.6;
+    background-color: #121212; /* Dark mode background for the entire page */
+    color: #e0e0e0; /* Softer white text color */
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.list-group-item {
+    margin-bottom: 20px;
+    background-color: #1e1e1e; /* Dark background for each article item */
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #333; /* Border for article cards */
+    color: #e0e0e0; /* Ensure text color is consistent */
+}
+
+a {
+    text-decoration: none;
+    color: #bb86fc; /* Light purple color for links in dark mode */
+    font-weight: bold;
+}
+
+p {
+    margin: 5px 0;
+    color: #cccccc; /* Light gray text color for better readability */
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 10px;
+    border-radius: 8px; /* Rounded corners for images */
+}
+
+.source {
+    font-size: 14px;
+    color: #888; /* Softer gray for source text */
+    margin-bottom: 10px;
+}
+
+.dropdown-checkboxes {
+    display: none;
+    padding: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: #333; /* Dark mode background for dropdown */
+    border: 1px solid #444; /* Border for dropdown for better visibility */
+}
+
+.dropdown-checkboxes label {
+    display: block;
+    color: #e0e0e0; /* Text color for dropdown items */
+}
+
+.dark-mode-toggle {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+}
+
+.btn-secondary, .btn-primary {
+    background-color: #333;
+    color: #e0e0e0;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover, .btn-primary:hover {
+    background-color: #444; /* Darker hover effect */
+}
+
+.form-check-label {
+    color: #e0e0e0; /* Checkbox label color */
+}
+
+.card {
+    background-color: #1e1e1e; /* Dark background for article cards */
+    border: 1px solid #333; /* Border for card elements */
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.article-title {
+    color: #bb86fc; /* Bright link color for titles */
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.article-summary {
+    color: #cccccc; /* Light gray for summaries */
+}
