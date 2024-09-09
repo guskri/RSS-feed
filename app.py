@@ -11,17 +11,16 @@ app = Flask(__name__)
 
 # List of RSS feed URLs from various Norwegian news sources
 RSS_FEEDS = [
-    "https://www.nrk.no/toppsaker.rss",  # NRK Nyheter
-    "https://www.vg.no/rss/feed",  # VG Forsiden
-    "https://www.dagbladet.no/?lab_viewport=rss",  # Dagbladet
-    "https://www.aftenposten.no/rss",  # Aftenposten
-    "https://www.tv2.no/rss/nyheter",  # TV2 Nyheter
-    "https://www.bt.no/rss",  # Bergens Tidende
-    "https://www.adressa.no/rss",  # Adresseavisen
-    "https://www.aftenbladet.no/rss",  # Stavanger Aftenblad
-    "https://www.fvn.no/rss",  # Fædrelandsvennen
-    "https://www.vl.no/rss",         # Vårt Land
-
+    ("https://www.nrk.no/toppsaker.rss", "NRK", "https://www.nrk.no/favicon.ico"),
+    ("https://www.vg.no/rss/feed", "VG", "https://www.vg.no/favicon.ico"),
+    ("https://www.dagbladet.no/?lab_viewport=rss", "Dagbladet", "https://www.dagbladet.no/favicon.ico"),
+    ("https://www.aftenposten.no/rss", "Aftenposten", "https://www.aftenposten.no/favicon.ico"),
+    ("https://www.tv2.no/rss/nyheter", "TV2", "https://www.tv2.no/favicon.ico"),
+    ("https://www.bt.no/rss", "Bergens Tidende", "https://www.bt.no/favicon.ico"),
+    ("https://www.adressa.no/rss", "Adresseavisen", "https://www.adressa.no/favicon.ico"),
+    ("https://www.aftenbladet.no/rss", "Stavanger Aftenblad", "https://www.aftenbladet.no/favicon.ico"),
+    ("https://www.fvn.no/rss", "Fædrelandsvennen", "https://www.fvn.no/favicon.ico"),
+    ("https://www.vl.no/rss", "Vårt Land", "https://www.vl.no/favicon.ico")
 ]
 
 
@@ -29,25 +28,27 @@ RSS_FEEDS = [
 def home():
     selected_sources = request.args.getlist('source')
     news = fetch_news_summaries(selected_sources)
-    sources = list(set([extract_source(feed) for feed in RSS_FEEDS]))  # Get unique sources for checkboxes
+    
+    # Prepare the sources with source URL (parsed), favicon, and name
+    sources = [(extract_source(feed[0]), feed[2], feed[1]) for feed in RSS_FEEDS]
 
     return render_template('index.html', news=news, sources=sources, selected_sources=selected_sources)
+
 
 def fetch_news_summaries(selected_sources):
     all_news = []
 
-    for feed_url in RSS_FEEDS:
+    for feed_url, source_name, favicon_url in RSS_FEEDS:  # Unpack the tuple
         try:
-            parsed_feed = feedparser.parse(feed_url)
+            parsed_feed = feedparser.parse(feed_url)  # Use the feed URL from the tuple
             
             if parsed_feed.bozo:
                 logging.warning(f"Failed to parse feed: {feed_url} - {parsed_feed.bozo_exception}")
                 continue
 
             for entry in parsed_feed.entries[:5]:  # Fetch top 5 entries per feed
-                source = extract_source(entry.link)
-                
-                if selected_sources and source not in selected_sources:
+                # Use source_name from RSS_FEEDS for filtering
+                if selected_sources and source_name not in selected_sources:
                     continue  # Skip articles that do not match the selected sources
                 
                 content = entry.get('summary') or entry.get('description') or "No summary available."
@@ -60,16 +61,18 @@ def fetch_news_summaries(selected_sources):
                     'link': entry.link,
                     'summary': truncated_content,
                     'image': image_url,
-                    'source': source
+                    'source': source_name  # Use the source name from RSS_FEEDS
                 })
         
         except Exception as e:
             logging.error(f"Error processing feed {feed_url}: {e}")
             continue  # Skip to the next feed if there's an error
-    # Shuffle the articles to create a random order
-    random.shuffle(all_news)
+    
+    random.shuffle(all_news)  # Shuffle the articles to create a random order
 
     return all_news
+
+
 
 def extract_image(entry):
     """

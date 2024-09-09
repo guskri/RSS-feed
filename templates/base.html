@@ -1,40 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{% block title %}News Summary{% endblock %}</title>
-    
-        <!-- Latest Bootstrap CSS from CDN -->
-        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    
-        <!-- Custom CSS -->
-        <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
-    
-        <!-- jQuery and Bootstrap JS -->
-        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-    </head>    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}News Summary{% endblock %}</title>
+
+    <!-- Latest Bootstrap CSS from CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
 <body>
     <!-- Navbar with Home Button and Logos -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="/">NyhetsMix</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">NyhetsMix</a>
 
-        <!-- Home button -->
-        
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-auto">
+            {% for source, favicon, name in sources %}
+                <li class="nav-item">
+                    <a href="/?source={{ name }}">
+                        {% if favicon %}
+                            <img src="{{ favicon }}" alt="{{ name }}" class="navbar-logo">
+                        {% else %}
+                            {{ name }}
+                        {% endif %}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</nav>
 
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav ml-auto">
-                {% for source in sources %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/?source={{ source }}">
-                            <img src="{{ url_for('static', filename='logos/' + source + '.png') }}" alt="{{ source }} logo" height="40">
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-    </nav>
 
     <div class="container mt-5">
         <h1 class="mb-4">{% block heading %}Latest News Summaries{% endblock %}</h1>
@@ -43,16 +45,6 @@
 
     <script>
         $(document).ready(function(){
-            $('.dropdown-toggle').click(function(){
-                $('.dropdown-checkboxes').toggle();
-            });
-
-            $(document).click(function(e) {
-                if (!$(e.target).closest('.dropdown').length) {
-                    $('.dropdown-checkboxes').hide();
-                }
-            });
-
             $('#toggleDarkMode').click(function() {
                 $('body').toggleClass('dark-mode');
                 if ($('body').hasClass('dark-mode')) {
