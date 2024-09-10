@@ -4,4 +4,5 @@ requests
 transformers
 torch
 openai
-BeautifulSoup4 
+BeautifulSoup4
+random

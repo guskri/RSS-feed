@@ -105,3 +105,35 @@ img {
 .article-summary {
     color: #cccccc; /* Light gray for summaries */
 }
+
+.navbar-logo {
+    height: 40px;
+    width: auto;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+/* Default logo appearance */
+.navbar-logo {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+/* Hover effect: Add shadow, enlarge, and background color change */
+.navbar-logo:hover {
+    transform: scale(1.1); /* Slightly increase the size */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Add a soft shadow */
+    background-color: rgba(255, 255, 255, 0.1); /* Light background change */
+    border-radius: 5px; /* Optional rounded corners for smoother look */
+}
+
+/* Optional: Add a subtle border or background change */
+.nav-item a:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Light background change */
+    border-radius: 5px; /* Rounded corners for the hover effect */
+}
+
+/* Make other buttons or links look clickable as well */
+a {
+    cursor: pointer;
+}
