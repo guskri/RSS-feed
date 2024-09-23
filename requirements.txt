@@ -6,3 +6,5 @@ torch
 openai
 BeautifulSoup4
 random
+newsdataapi
+python-dotenv
